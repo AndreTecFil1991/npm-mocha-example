@@ -5,7 +5,7 @@ function printResult(result) {
     console.log(result);
 }
 
-function processInput(inputFile) {
+function processInput(inputFile, callback = null) {
     if (inputFile) {
         //check if the given inputFile exists as a file
         try {
@@ -15,11 +15,19 @@ function processInput(inputFile) {
         } catch (e) {
             // Handle error in case of non existent file
             if (e.code == 'ENOENT') {
-                console.log('\nThe requested file does not exist\n');
+                var message = '\nThe requested file does not exist\n';
+                if (callback)
+                    return message;
+                else
+                    console.log(message);
             }
         }
     } else {
-        console.log('\nPlease provide an input file\n');
+        var message = '\nPlease provide an input file\n';
+        if (callback)
+            return message;
+        else
+            console.log(message);
     }
 }
 
