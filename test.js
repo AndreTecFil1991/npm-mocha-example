@@ -46,17 +46,17 @@ describe('Example test suite', () => {
         }))
     });
 
-    /*it('expect to process an invalid file', (done) => {
-        expect(processInput(null, (text) => {
-            expect(text).to.be.eql('\nPlease provide an input file\n');
-            done()
-        }))
-    });
-
     it('expect to process an invalid file', (done) => {
         expect(processInput('blablabla.txt', (text) => {
             expect(text).to.be.eql('\nThe requested file does not exist\n');
             done()
         }))
-    });*/
+    });
+
+    it('expect to process an invalid file', (done) => {
+        expect(processInput(null, (text) => {
+            expect(text).to.be.eql('\nPlease provide an input file\n');
+            done()
+        }))
+    });
 });

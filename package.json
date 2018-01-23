@@ -4,9 +4,7 @@
   "description": "small npm test",
   "main": "Example.js",
   "dependencies": {
-    "chai": "^4.1.2",
-    "moment": "^2.20.1",
-    "mocha": "^5.0.0"
+    "moment": "^2.20.1"
   },
   "scripts": {
     "start": "node Example.js",
@@ -16,5 +14,9 @@
     "npm"
   ],
   "author": "André Filipe",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "mocha": "^5.0.0"
+  }
 }

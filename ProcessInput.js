@@ -1,4 +1,4 @@
-var fs = require('fs');
+const fs = require('fs');
 var readFileLines = require('./ReadFileLines');
 
 function printResult(result) {
@@ -13,16 +13,16 @@ function processInput(inputFile, callback = null) {
                 readFileLines(inputFile, printResult)
             } else if (err.code === 'ENOENT') {
                 var message = '\nThe requested file does not exist\n';
-                if (callback)
-                    return message;
+                if (callback && typeof callback === 'function')
+                    return callback(message);
                 else
                     console.log(message);
             }
         })
     } else {
         var message = '\nPlease provide an input file\n';
-        if (callback)
-            return message;
+        if (callback && typeof callback === 'function')
+            return callback(message);
         else
             console.log(message);
     }

@@ -1,5 +1,5 @@
-var fs = require('fs');
-var moment = require('moment');
+const fs = require('fs');
+const moment = require('moment');
 
 function processRecords(records) {
     var recordsWithCallDuration = [];
