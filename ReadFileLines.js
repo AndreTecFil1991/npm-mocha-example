@@ -1,25 +1,22 @@
 var fs = require('fs');
 var moment = require('moment');
 
-//array to store inputFile processed records
-var records = [];
-//costs per minute
-var first5MinutesCost = 0.05;
-var remainingMinutesCost = 0.02;
-
-function processRecords() {
-    var validTimes = true;
+function processRecords(records) {
     var recordsWithCallDuration = [];
     //use of reduce to iterate the original array and iterate the new one with caller validation
-    Object.keys(records).reduce(function (previous, current) {
-        var currentRecord = records[current];
-        var time_of_start = currentRecord.time_of_start;
-        var time_of_finish = currentRecord.time_of_finish;
 
+    records.forEach(el => {
+        var currentRecord = el;
         var caller = currentRecord.call_from;
         var callerIndex = recordsWithCallDuration.findIndex(i => i.caller === caller);
-        //save calls duration in milliseconds
-        var milliseconds = moment(time_of_finish, 'hh:mm:ss') - moment(time_of_start, 'hh:mm:ss');
+        //times in milliseconds
+        var time_of_start = moment(currentRecord.time_of_start, 'hh:mm:ss');
+        var time_of_finish = moment(currentRecord.time_of_finish, 'hh:mm:ss');
+        //midnight tim in milliseconds to calculate over midnight calls
+        var midnight_time = moment('23:59:59', 'hh:mm:ss');
+
+        //process calls duration in milliseconds
+        var milliseconds = time_of_finish > time_of_start ? time_of_finish - time_of_start : midnight_time - time_of_start + time_of_finish;
         //check if the caller already exists in recordsWithCallDuration, if exists we update the callDuration, if don't we create add a new object to the array
         if (callerIndex > -1) {
             recordsWithCallDuration[callerIndex].callDuration += milliseconds;
@@ -31,8 +28,7 @@ function processRecords() {
                 }
             );
         }
-
-    }, {});
+    })
 
     //sort ascendly the processed results (the last one it will be "ignored" since it's the caller with the highest call duration of the day)
     const recordsWithCallDurationSorted = recordsWithCallDuration.sort((a, b) => {
@@ -45,6 +41,9 @@ function processRecords() {
 
         if (record < recordsWithCallDurationSorted.length - 1) {
             var minutes = moment.duration(callDuration).hours() * 60 + moment.duration(callDuration).minutes();
+            //costs per minute
+            var first5MinutesCost = 0.05;
+            var remainingMinutesCost = 0.02;
 
             if (moment.duration(callDuration).seconds() > 0)
                 minutes++;
@@ -54,31 +53,30 @@ function processRecords() {
     }
 
     // use of toFix(2) to show allways 2 decimal places
-    var result = '\n' + totalCost.toFixed(2) + '\n';
+    var result = totalCost.toFixed(2) + '\n';
     return result;
 
 }
 
 function convertLinesToRecords(line) {
     var parts = line.split(';');
-    //check if each line has 4 parameters splitted by ; and return -1 in case of invalid records
+    //check if each line has 4 parameters splitted by ; and return null in case of invalid records
     if (parts.length != 4) {
-        return -1;
+        return null;
     } else {
-        records.push({
+        return {
             time_of_start: parts[0],
             time_of_finish: parts[1],
             call_from: parts[2],
             call_to: parts[3]
-        })
-        return 0;
+        }
     }
 }
 
 function readFileLines(inputFile, callback = null) {
     var input = fs.createReadStream(inputFile);
     var remaining = "";
-    records = [];
+    let records = [];
     input.on("data", function (data) {
         remaining += data;
         var lineIndex = remaining.indexOf("\n");
@@ -87,16 +85,20 @@ function readFileLines(inputFile, callback = null) {
         while (lineIndex > -1) {
             var line = remaining.substring(0, lineIndex);
             remaining = remaining.substring(lineIndex + 1);
+            let convertedLine = convertLinesToRecords(line)
 
-            if (convertLinesToRecords(line) != 0) {
+            if (convertedLine) {
+                records.push(convertedLine);
+            } else {
                 validRecords = false;
                 break;
             }
             lineIndex = remaining.indexOf("\n");
         }
+        
         //if all the records are valid we proceed to the next call, otherwise it's presented the log bellow and the program is finished
         if (validRecords) {
-            var result = processRecords();
+            var result = processRecords(records);
             if (callback)
                 callback(result);
             else
