@@ -1,7 +1,5 @@
-const fs = require('fs');
-const moment = require('moment');
-
 function processRecords(records) {
+    const moment = require('moment');
     var recordsWithCallDuration = [];
     //use of reduce to iterate the original array and iterate the new one with caller validation
 
@@ -74,29 +72,25 @@ function convertLinesToRecords(line) {
 }
 
 function readFileLines(inputFile, callback = null) {
-    var input = fs.createReadStream(inputFile);
-    var remaining = "";
+    var fs = require('fs');
+    var readline = require('readline');
+    var stream = require('stream');
+    var instream = fs.createReadStream(inputFile);
+    var outstream = new stream;
+    var rl = readline.createInterface(instream, outstream);
     let records = [];
-    input.on("data", function (data) {
-        remaining += data;
-        var lineIndex = remaining.indexOf("\n");
-        //boolean to store the validity of inputFile records
-        var validRecords = true;
-        while (lineIndex > -1) {
-            var line = remaining.substring(0, lineIndex);
-            remaining = remaining.substring(lineIndex + 1);
-            let convertedLine = convertLinesToRecords(line)
+    var validRecords = true;
+    rl.on('line', function (line) {
+        let convertedLine = convertLinesToRecords(line)
 
-            if (convertedLine) {
-                records.push(convertedLine);
-            } else {
-                validRecords = false;
-                break;
-            }
-            lineIndex = remaining.indexOf("\n");
+        if (convertedLine) {
+            records.push(convertedLine);
+        } else {
+            validRecords = false;
+            rl.close();
         }
-        
-        //if all the records are valid we proceed to the next call, otherwise it's presented the log bellow and the program is finished
+    });
+    rl.on('close', function () {
         if (validRecords) {
             var result = processRecords(records);
             if (callback)
