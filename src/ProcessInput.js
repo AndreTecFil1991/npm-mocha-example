@@ -1,5 +1,5 @@
 const fs = require('fs');
-var readFileLines = require('./ReadFileLines');
+const readFileLines = require('./ReadFileLines');
 
 function printResult(result) {
     console.log('\nTotal Cost: ' + result);
@@ -7,12 +7,13 @@ function printResult(result) {
 
 function processInput(inputFile, callback = null) {
     if (inputFile) {
+        const fileToCheck = 'files/' + inputFile
         //check if the given inputFile exists as a file
-        fs.stat(inputFile, (err) => {
+        fs.stat(fileToCheck, (err) => {
             if (err === null) {
                 readFileLines(inputFile, printResult)
             } else if (err.code === 'ENOENT') {
-                var message = '\nThe requested file does not exist\n';
+                const message = '\nThe requested file does not exist\n';
                 if (callback && typeof callback === 'function')
                     return callback(message);
                 else
@@ -20,7 +21,7 @@ function processInput(inputFile, callback = null) {
             }
         })
     } else {
-        var message = '\nPlease provide an input file\n';
+        const message = '\nPlease provide an input file\n';
         if (callback && typeof callback === 'function')
             return callback(message);
         else

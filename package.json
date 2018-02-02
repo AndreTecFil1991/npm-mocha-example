@@ -2,15 +2,15 @@
   "name": "npm-project",
   "version": "0.0.1",
   "description": "small npm test",
-  "main": "Example.js",
+  "main": "src/Example.js",
   "dependencies": {
     "moment": "^2.20.1",
     "readline": "^1.3.0",
     "stream": "0.0.2"
   },
   "scripts": {
-    "start": "node Example.js",
-    "test": "mocha test.js"
+    "start": "node src/Example.js",
+    "test": "mocha tests/test.js"
   },
   "keywords": [
     "npm"

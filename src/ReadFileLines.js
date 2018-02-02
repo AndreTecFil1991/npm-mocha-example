@@ -1,3 +1,7 @@
+const fs = require('fs');
+const readline = require('readline');
+const stream = require('stream');
+
 function processRecords(records) {
     const moment = require('moment');
     var recordsWithCallDuration = [];
@@ -72,10 +76,7 @@ function convertLinesToRecords(line) {
 }
 
 function readFileLines(inputFile, callback = null) {
-    var fs = require('fs');
-    var readline = require('readline');
-    var stream = require('stream');
-    var instream = fs.createReadStream(inputFile);
+    var instream = fs.createReadStream('files/' + inputFile);
     var outstream = new stream;
     var rl = readline.createInterface(instream, outstream);
     let records = [];
