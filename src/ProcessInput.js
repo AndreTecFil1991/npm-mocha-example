@@ -10,6 +10,7 @@ function processInput(inputFile, callback = null) {
         const fileToCheck = 'files/' + inputFile
         //check if the given inputFile exists as a file
         fs.stat(fileToCheck, (err) => {
+            console.log(err)
             if (err === null) {
                 readFileLines(inputFile, printResult)
             } else if (err.code === 'ENOENT') {
@@ -18,6 +19,8 @@ function processInput(inputFile, callback = null) {
                     return callback(message);
                 else
                     console.log(message);
+            } else {
+                console.log(err.Error)
             }
         })
     } else {

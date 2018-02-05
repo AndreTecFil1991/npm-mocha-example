@@ -1,6 +1,6 @@
-var expect = require('chai').expect;
-var readFileLines = require('../src/ReadFileLines');
-var processInput = require('../src/ProcessInput');
+let expect = require('chai').expect;
+let readFileLines = require('../src/ReadFileLines');
+let processInput = require('../src/ProcessInput');
 
 describe('Example test suite', () => {
     
